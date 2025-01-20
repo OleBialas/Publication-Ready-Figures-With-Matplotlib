@@ -3,6 +3,7 @@
 The aim of this notebook is to download the data described in [this publication](https://www.nature.com/articles/s41586-020-03171-x) and store parts of it in an easily accessible format.
 For each recording session, there will be three output files:
 - `units.cvs`: Table listing all recorded units and a bunch of metrics
+- `stimuli.csv`: Table listing all occurrences of the selected stimuli for the session
 - `spike_times.npy`: The spike times for every unit recorded in that session
 - `mean_waveforms.npy`: Mean waveform of every unit recorded in that session
 
@@ -23,6 +24,7 @@ root = Path('/home/obi/projects/Publication-Ready-Figures-With-Matplotlib')
 cache = EcephysProjectCache.from_warehouse(manifest=root/"data"/"raw"/"manifest.json")
 SESSION_TYPE="brain_observatory_1.1"
 ROI = ["VISpm", "VISrl", "VISam"] # primary, rostrolateral and anteriormedial visual cortex
+STIMULI = ["gabors", "flashes", "drift_gratings", "static_gratings", "natural_scenes"]
 GENOTYPES = ["wt/wt"]
 ```
 
@@ -83,6 +85,15 @@ Get spike times for the selected units
         spike_times_out[i] = spike_times[i]
 ```
 
+## Stimuli
+Load stimulus table and select the ones defined in `STIMULI`
+
+```{python}
+#| ref.label: subject-loop
+    stimuli = session.get_stimulus_table()
+    stimuli = stimuli[stimuli.stimulus_name.isin(STIMULI)]
+```
+
 ## Write data
 Now we can create an output folder and store the data
 
@@ -92,6 +103,7 @@ Now we can create an output folder and store the data
     if not out_dir.exists():
         out_dir.mkdir()
     units.to_csv(out_dir/f"ses_{session_id}_units.csv")
+    stimuli.to_csv(out_dir/f"ses_{session_id}_stimuli.csv")
     np.save(out_dir/f"ses_{session_id}_mean_waveforms.npy", mean_waveforms_out, allow_pickle=True)
     np.save(out_dir/f"ses_{session_id}_spike_times.npy", spike_times_out, allow_pickle=True)
 ```
