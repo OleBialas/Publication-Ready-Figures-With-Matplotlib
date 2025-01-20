@@ -39,7 +39,7 @@ sessions = sessions[sessions.full_genotype.isin(GENOTYPES)]
 
 #| label: session-loop
 session_id = sessions.index[0]
-for session_id in session.index:
+for session_id in sessions.index:
     session = cache.get_session_data(session_id)
 
 
