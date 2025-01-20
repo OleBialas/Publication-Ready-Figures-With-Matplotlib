@@ -1,13 +1,4 @@
----
-title: "Matplotlib tutorial"
-format:
-  html:
-    code-fold: true
-jupyter: python3
----
-
 # Matplotlib tutorial
-
 
 
 ```{python}

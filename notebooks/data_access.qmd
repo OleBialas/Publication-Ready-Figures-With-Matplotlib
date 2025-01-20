@@ -1,0 +1,115 @@
+# Acessing the data
+
+
+```{python}
+import os
+import sys
+from pathlib import Path
+import requests
+import zipfile
+import numpy as np
+import pandas as pd
+from matplotlib import pyplot as plt
+```
+
+## Download data
+
+```{python}
+root = Path(os.getcwd()).parent
+if not (root/"data").exists():
+    token = "bIDNCBs37frcli8"
+    download_url = f"https://uni-bonn.sciebo.de/index.php/s/{token}/download"
+    response = requests.get(download_url, stream=True)
+    response.raise_for_status()
+    with open('download.zip', 'wb') as f:
+        for chunk in response.iter_content(chunk_size=8192):
+            if chunk:
+                f.write(chunk)
+    with zipfile.ZipFile('download.zip', 'r') as zip_ref:
+        zip_ref.extractall(root)
+    os.remove('download.zip')
+    data_dir = Path(root/"visual_coding_spiking_data")
+    data_dir.rename(root/"data")
+```
+
+
+## Data contents
+
+The downloaded data can be found in the `/data` folder within the root directory of this repository.
+Let's list all recording sessions:
+
+```{python}
+sys.path.append(str(root))
+sessions = (root/"data").glob("ses*")
+for ses in sessions:
+    print(ses.name)
+```
+
+Each session contains four files:
+
+- `units.cvs`: Table listing all recorded units and a bunch of metrics
+- `stimuli.csv`: Table listing all occurrences of the selected stimuli for the session
+- `spike_times.npy`: The spike times for every unit recorded in that session
+- `mean_waveforms.npy`: Mean waveform of every unit recorded in that session
+
+```{python}
+ses = root/"data"/"ses_737581020"
+for file in ses.glob("*"):
+    print(file.name)
+```
+
+## Example 1: plot mean spike waveforms of V1 neurons
+
+To obtain the mean waveforms of neurons in V1, we first have to select the units located in that area.
+For this, we can load the `units.csv` table and filter it:
+
+```{python}
+units = pd.read_csv(ses/f"{ses.name}_units.csv", index_col=0)
+units = units[units.ecephys_structure_acronym == "VISpm"]
+```
+
+Now we can load `mean_waveforms.npy` and use the `unit_id` (i.e. the index) of the filtered `units` table to obtain the get the mean waveforms of those units and plot them.
+Because this is an object array, we have to call `.item()` to retrieve the content.
+
+```{python}
+mean_waveforms = np.load(ses/f"{ses.name}_mean_waveforms.npy", allow_pickle=True)
+mean_waveforms = mean_waveforms.item()
+for uid in units.index:
+    plt.plot(mean_waveforms["time"], mean_waveforms[uid])
+plt.show()
+```
+
+## Example 2: Plot the PSTH for grating_stimuli in V1
+
+The root folder of this repository contains a file called `utils.py` that contains some useful functions for computing spike statistics.
+We can import the `compute_psth()` function from the `utils` module
+
+```{python}
+from utils import compute_psth
+```
+
+Load the table of `stimuli` and select all `static_grating` stimuli
+```{python}
+stimuli = pd.read_csv(ses/f"{ses.name}_stimuli.csv", index_col=0)
+stimuli = stimuli[stimuli.stimulus_name=="static_gratings"]
+stim_times = np.asarray(stimuli.start_time)
+```
+
+Load the spike times - because it is an object array, we have to call `.item()` to retrieve the content after loading
+```{python}
+spike_times = np.load(ses/f"{ses.name}_spike_times.npy", allow_pickle=True)
+spike_times = spike_times.item()
+spike_times = spike_times[units.index[2]]
+```
+
+Compute the PSTH and plot the result
+```{python}
+bin_centers, psth = compute_psth(spike_times, stim_times, window=(-0.05, 0.25), bin_width=0.01)
+plt.plot(bin_centers, psth)
+```
+
+
+
+
+
+
