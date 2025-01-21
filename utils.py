@@ -1,5 +1,23 @@
 import numpy as np
 
+
+def pca(X, n_components=None):
+    X -= np.mean(X, axis=0)
+    cov = np.cov(X)
+    eigenvalues, eigenvectors = np.linalg.eigh(cov)
+
+    idx = np.argsort(eigenvalues)[::-1]
+    eigenvalues = eigenvalues[idx]
+    eigenvectors = eigenvectors[:, idx]
+
+    if n_components is None:
+        n_components = X.shape[1]
+
+    components = eigenvectors[:n_components, :]
+    explained_variance_ratio = eigenvalues[:n_components] / np.sum(eigenvalues)
+    transformed_X = np.dot(components, X)
+    return explained_variance_ratio, transformed_X
+
 def compute_psth(spike_times, stim_times, window=(-0.05, 0.25), bin_width=0.01):
     bins = np.arange(window[0], window[1] + bin_width, bin_width)
     bin_centers = bins[:-1] + bin_width/2

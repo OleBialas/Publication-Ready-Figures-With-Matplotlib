@@ -1,0 +1,48 @@
+
+
+```{python}
+from pathlib import Path
+import sys
+import os
+import numpy as np
+import pandas as pd
+from matplotlib import pyplot as plt
+root = Path(os.getcwd()).parent
+sys.path.append(str(root))
+from utils import pca
+```
+
+## Load mean waveforms
+
+Get the mean waveforms for every area across all sessions and put them into an array:
+
+```{python}
+mw_v1 = []
+for ses in (root/"data").glob("ses*"):
+    units = pd.read_csv(ses/f"{ses.name}_units.csv", index_col=0)
+    mw = np.load(ses/f"{ses.name}_mean_waveforms.npy", allow_pickle=True).item()
+    units_v1 = units[units.ecephys_structure_acronym=="VISpm"]
+    for uid in units_v1.index:
+        mw_v1.append(mw[uid])
+
+mw_v1 = np.stack(mw_v1)
+```
+
+
+```{python}
+X = mw_v1
+X -= np.mean(X, axis=0)
+cov = np.cov(X, rowvar=False)
+eigenvalues, eigenvectors = np.linalg.eigh(cov)
+
+idx = np.argsort(eigenvalues)[::-1]
+eigenvalues = eigenvalues[idx]
+eigenvectors = eigenvectors[:, idx]
+
+if n_components is None:
+    n_components = X.shape[1]
+
+components = eigenvectors[:, :n_components]
+explained_variance_ratio = eigenvalues[:n_components] / np.sum(eigenvalues)
+transformed_X = np.dot(X, components)
+```

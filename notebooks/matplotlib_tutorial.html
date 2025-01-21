@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Matplotlib tutorial</title>
+<title>matplotlib_tutorial</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -96,25 +96,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="matplotlib-tutorial" class="level1">
-<h1>Matplotlib tutorial</h1>
-<div id="a4829433" class="cell" data-execution_count="1">
-<details class="code-fold">
-<summary>Code</summary>
+<div id="55a94390" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib <span class="im">import</span> pyplot <span class="im">as</span> plt</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 <section id="creating-regularly-spaced-subplots" class="level2">
 <h2 class="anchored" data-anchor-id="creating-regularly-spaced-subplots">Creating (regularly spaced) subplots</h2>
 <p>With <code>plt.subplots()</code> we can create subplots in a regular grid. The first argument is the number of rows, the second argument is the number of columns. Calling <code>plt.subplots()</code> without any arguments creates a single plot. This mean we can use the same syntax whether we create one or several plots!</p>
-<div id="f3cd5fd1" class="cell" data-execution_count="2">
-<details class="code-fold">
-<summary>Code</summary>
+<div id="24d86ce4" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">2</span>, <span class="dv">3</span>)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -141,14 +133,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="matplotlibs-object-oriented-syntax" class="level2">
 <h2 class="anchored" data-anchor-id="matplotlibs-object-oriented-syntax">Matplotlib’s object oriented syntax</h2>
 <p>The <code>plt.subplots()</code> function returns two objects: a <code>Figure</code> and an <code>Axes</code> (or an array of <code>Axes</code> if multiple subplots are created). The <code>Figure</code> object is used to interact with the whole plot, for example when saving the plot as an image. The <code>Axes</code> object is used to interact with a specific subplot, for example when plotting data or adding axis labels. If you are used to using Matplotlib by calling its functions, for the most part you can just replace them with methods of the <code>Axes</code> object that have the same name. For example: instead of <code>plt.plot(x,y)</code>, you can call <code>ax.plot(x,y)</code> where ax is an instance of the <code>Axes</code> object.</p>
-<div id="23e1ea1b" class="cell" data-execution_count="3">
-<details class="code-fold">
-<summary>Code</summary>
+<div id="51575d74" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.linspace(<span class="dv">0</span>, <span class="dv">2</span><span class="op">*</span>np.pi, <span class="dv">400</span>)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.sin(x<span class="op">**</span><span class="dv">2</span>)</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>ax.plot(x,y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -161,15 +150,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="axis-customization" class="level2">
 <h2 class="anchored" data-anchor-id="axis-customization">Axis customization</h2>
 <p>The <code>Axes</code> object has a very useful <code>.set()</code> method that allow us to set axis properties like labels and ranges in a single call. Lets use it on the example above to: - add axis labels - add a title - show only the positive half of the y-axis</p>
-<div id="33a3621e" class="cell" data-execution_count="4">
-<details class="code-fold">
-<summary>Code</summary>
+<div id="3fc60b28" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.linspace(<span class="dv">0</span>, <span class="dv">2</span><span class="op">*</span>np.pi, <span class="dv">400</span>)</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.sin(x<span class="op">**</span><span class="dv">2</span>)</span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>ax.plot(x,y)</span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>ax.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">"Time [s]"</span>, ylabel<span class="op">=</span><span class="st">"Amplitude [a.u.]"</span>, title<span class="op">=</span><span class="st">'Chirp'</span>, ylim<span class="op">=</span>(<span class="dv">0</span>,<span class="dv">1</span>))<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -182,9 +168,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="custom-plotting-functions" class="level2">
 <h2 class="anchored" data-anchor-id="custom-plotting-functions">Custom plotting functions</h2>
 <p>Another advantage of using the object oriented sytnax is that we can divide the code that draws the plots from the code that creates the layout. By writing a plotting function that takes an <code>Axes</code> object as input and draws to it, we can use the same function to draw on multiple plots. For example, if we have a function for drawing a circle and one for drawing a square.</p>
-<div id="7fc35866" class="cell" data-execution_count="5">
-<details class="code-fold">
-<summary>Code</summary>
+<div id="dd37b9a0" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_circle(ax):</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    theta <span class="op">=</span> np.linspace(<span class="dv">0</span>, <span class="dv">2</span><span class="op">*</span>np.pi, <span class="dv">100</span>)  <span class="co"># 100 points around the circle</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    x, y <span class="op">=</span> np.cos(theta), np.sin(theta)</span>
@@ -193,16 +177,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_square(ax):</span>
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    x, y <span class="op">=</span> [<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="op">-</span><span class="dv">1</span>, <span class="op">-</span><span class="dv">1</span>], [<span class="op">-</span><span class="dv">1</span>, <span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="op">-</span><span class="dv">1</span>]</span>
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    ax.plot(x,y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 <p>We can create our subplots and then pass the <code>Axes</code> objects to the functions so they can draw on them.</p>
-<div id="ead2708d" class="cell" data-execution_count="6">
-<details class="code-fold">
-<summary>Code</summary>
+<div id="22acf6e5" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>    fig, ax <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    plot_circle(ax[<span class="dv">0</span>])</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    plot_square(ax[<span class="dv">1</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -212,9 +192,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <p>Or we could use the same functions to draw a different plot.</p>
-<div id="5f50fa9a" class="cell" data-execution_count="7">
-<details class="code-fold">
-<summary>Code</summary>
+<div id="85aa35e6" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>    fig, ax <span class="op">=</span> plt.subplots(<span class="dv">2</span>, <span class="dv">3</span>)</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    plot_circle(ax[<span class="dv">0</span>,<span class="dv">0</span>])</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    plot_circle(ax[<span class="dv">1</span>,<span class="dv">1</span>])</span>
@@ -222,7 +200,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    plot_square(ax[<span class="dv">1</span>,<span class="dv">0</span>])</span>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    plot_square(ax[<span class="dv">0</span>,<span class="dv">1</span>])</span>
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    plot_square(ax[<span class="dv">1</span>,<span class="dv">2</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -236,16 +213,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="irregularly-spaced-plots" class="level2">
 <h2 class="anchored" data-anchor-id="irregularly-spaced-plots">Irregularly spaced plots</h2>
 <p>With <code>plt.subplots()</code>, all plots have the same size. However, we may want to allocate more space for some plots than for others. A function that allows this is <code>plt.subplot_mosaic()</code>. This function takes as argument a list of lists. Each sub-list defined on row of the plot. The elements in the sub-lists are strings and we can extend a given subplot across multiple rows and colums by simply repeating it.</p>
-<div id="336b652b" class="cell" data-execution_count="8">
-<details class="code-fold">
-<summary>Code</summary>
+<div id="30780ec6" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplot_mosaic(</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    [</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>        [<span class="st">'a'</span>, <span class="st">'a'</span>, <span class="st">'b'</span>],</span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>        [<span class="st">'c'</span>, <span class="st">'d'</span>, <span class="st">'b'</span>]</span>
 <span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    ]</span>
 <span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -255,9 +229,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <p><code>plt.subplot_mosaic</code> returns a dictionary of <code>Axes</code> objects. To access a given subplot, we have to use its name</p>
-<div id="586ffe5d" class="cell" data-execution_count="9">
-<details class="code-fold">
-<summary>Code</summary>
+<div id="26475d06" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplot_mosaic(</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    [</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>        [<span class="st">'a'</span>, <span class="st">'a'</span>],</span>
@@ -266,7 +238,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>ax[<span class="st">'a'</span>].plot([<span class="dv">0</span>,<span class="dv">1</span>], [<span class="dv">0</span>,<span class="dv">1</span>])</span>
 <span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>ax[<span class="st">'b'</span>].plot([<span class="dv">0</span>,<span class="dv">1</span>], [<span class="dv">1</span>,<span class="dv">0</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -279,12 +250,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="freeform-layout" class="level2">
 <h2 class="anchored" data-anchor-id="freeform-layout">Freeform layout</h2>
 <p>It is also possible to create subplots without any guidelines. By calling the <code>.add_axes()</code> method of the <code>Figure</code> object, we can manually determine the coordinates and size of a subplot. The first two arguments of <code>.add_axes()</code> are the x and y coordinate of the new subplot’s bottom left corner, the third and fourth argument are the width and height of the figure. The method returns an <code>Axes</code> object that can be used to interact with the newly created axis</p>
-<div id="13e39f62" class="cell" data-execution_count="10">
-<details class="code-fold">
-<summary>Code</summary>
+<div id="92d1eafc" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>ax_new <span class="op">=</span> fig.add_axes([<span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="fl">0.25</span>, <span class="fl">0.25</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -294,12 +262,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <p>The coordinate system goes from 0 to 1: (0,0) is the bottom left corner, (1,1) is the top right corner and (0.5, 0.5 is the center). The <code>.add_axes</code> method can also be used to create a subplot outside of the current figure limits. This can be useful sometimes, for example when adding a colorbar to an existing figure.</p>
-<div id="47ab7366" class="cell" data-execution_count="11">
-<details class="code-fold">
-<summary>Code</summary>
+<div id="fdb06de9" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>ax_new <span class="op">=</span> fig.add_axes([<span class="fl">1.01</span>, <span class="fl">0.3</span>, <span class="fl">0.05</span>, <span class="fl">0.4</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -313,14 +278,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="subplot-labeling" class="level2">
 <h2 class="anchored" data-anchor-id="subplot-labeling">Subplot labeling</h2>
 <p>In publications, figures must be labeled so they can be referenced in the text. To add text to an <code>Axes</code> we can use the <code>.text()</code> method. However, per default this method uses the coordinates of the data plotted to the axis. This means, we would have to figure out the correct coordiantes for each subplot individually. A convenient solution is the <code>.transAxes</code> transform that allows us to use the same normalized coordinate system as in the example above</p>
-<div id="811a5c13" class="cell" data-execution_count="12">
-<details class="code-fold">
-<summary>Code</summary>
+<div id="ed11f04a" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">3</span>)</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>labels <span class="op">=</span> <span class="st">"a"</span>, <span class="st">"b"</span>, <span class="st">"c"</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">3</span>):</span>
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    ax[i].text(<span class="fl">0.95</span>, <span class="fl">0.85</span>, labels[i], transform<span class="op">=</span>ax[i].transAxes, weight<span class="op">=</span><span class="st">"bold"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -329,7 +291,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-</section>
 </section>
 
 </main>

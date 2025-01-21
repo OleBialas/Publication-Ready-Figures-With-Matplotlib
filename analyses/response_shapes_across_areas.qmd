@@ -1,0 +1,113 @@
+
+
+```{python}
+from pathlib import Path
+import sys
+import os
+import numpy as np
+import pandas as pd
+from matplotlib import pyplot as plt
+root = Path(os.getcwd()).parent
+sys.path.append(str(root))
+from utils import pca
+window_size = 10
+factor=2
+```
+
+## Load mean waveforms
+
+```{python}
+def get_mean_waveforms():
+    mw_v1, mw_rl, mw_am = [], [], []
+    for ses in (root/"data").glob("ses*"):
+        units = pd.read_csv(ses/f"{ses.name}_units.csv", index_col=0)
+        mw = np.load(ses/f"{ses.name}_mean_waveforms.npy", allow_pickle=True).item()
+        units_v1 = units[units.ecephys_structure_acronym=="VISpm"]
+        for uid in units_v1.index:
+            mw_v1.append(mw[uid])
+        units_rl = units[units.ecephys_structure_acronym=="VISrl"]
+        for uid in units_rl.index:
+            mw_rl.append(mw[uid])
+        units_am = units[units.ecephys_structure_acronym=="VISam"]
+        for uid in units_am.index:
+            mw_am.append(mw[uid])
+    times = mw["time"]
+    mw_v1 = np.stack(mw_v1)
+    mw_rl = np.stack(mw_rl)
+    mw_am = np.stack(mw_am)
+    return time, mw_v1, mw_rl, mw_am
+```
+
+## Smooth and downsample
+
+```{python}
+def smooth_and_downsample(X, window_size=window_size, factor=factor):
+    kernel = np.ones(window_size) / window_size
+    smoothed = np.apply_along_axis(
+        lambda x: np.convolve(x, kernel, mode='valid'), 
+        axis=1, 
+        arr=X
+    )
+    return smoothed[:, ::factor]
+```
+
+## Plot waveforms
+
+```{python}
+time, mw_v1, mw_rl, mw_am = get_mean_waveforms()
+valid_time = time[window_size - 1:]
+valid_time 
+fig, ax = plt.subplots(3, figsize=(8,12), sharex=True)
+plt.subplots_adjust(hspace=0)
+
+for axes, data, name in zip(ax, [mw_v1, mw_rl, mw_am], ["V1", "RL", "AM"]):
+    data = smooth_and_downsample(data)
+    for d in data:
+        axes.plot(d, linewidth=0.2)
+
+```
+
+## Plot variance explained
+
+```{python}
+#| label: plot-function
+def plot_pca_variance_explained(ax, n_components=None, logscale=True):
+    mw_v1, mw_rl, mw_am = get_mean_waveforms()
+    for data, name in zip([mw_v1, mw_rl, mw_am], ["V1", "RL", "AM"]):
+        data = smooth_and_downsample(data)
+        variance_explained, components = pca(data, n_components)
+        if logscale:
+            ax.semilogy(variance_explained*100, label=name)
+        else:
+            ax.plot(variance_explained*100, label=name)
+    ax.legend()
+    ax.set(xlabel="Component number", ylabel="Variance explained [%]")
+
+```
+
+```{python}
+fig, ax = plt.subplots()
+plot_pca_variance_explained(ax, n_components=25, logscale=True)
+```
+
+## Plot first PC
+
+```{python}
+def plot_first_pc(ax):
+    mw_v1, mw_rl, mw_am = get_mean_waveforms()
+    for data, name in zip([mw_v1, mw_rl, mw_am], ["V1", "RL", "AM"]):
+        data = smooth_and_downsample(data)
+        variance_explained, components = pca(data, n_components=1)
+        first_pc = components[0]**2
+        first_pc/=first_pc.max()
+        ax.plot(first_pc, label=name)
+    ax.legend()
+
+```
+
+```{python}
+fig, ax = plt.subplots()
+plot_first_pc(ax)
+```
+
+
