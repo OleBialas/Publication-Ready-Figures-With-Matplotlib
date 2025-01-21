@@ -22,7 +22,7 @@ print(session_dirs)
 for session_dir in session_dirs:
 
 # %%
-    # session_dir = session_dirs[0]
+    session_dir = session_dirs[0]
     session_dir
 
     # %%
@@ -51,6 +51,9 @@ for session_dir in session_dirs:
     units2['spike_times'] = st
     units2.to_parquet(processed_dir / 'units.parquet')
 
+
+# %%
+units2
 
 
 
