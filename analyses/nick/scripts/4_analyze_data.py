@@ -27,7 +27,7 @@ df
 df.ecephys_structure_acronym.value_counts()
 
 # %%
-dff = df[(-0.1 < df['spike_time']) & (df['spike_time'] < 0.2)]
+dff = df[(-0.05 < df['spike_time']) & (df['spike_time'] < 0.25)]
 dff
 
 # %%
