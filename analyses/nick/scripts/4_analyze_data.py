@@ -26,12 +26,9 @@ df
 # %%
 df.ecephys_structure_acronym.value_counts()
 
-# %%
-dff = df[(-0.05 < df['spike_time']) & (df['spike_time'] < 0.25)]
-dff
 
-# %%
-structure = dff.groupby('ecephys_structure_acronym').get_group('VISam')
-sns.displot(data=structure, x='spike_time')
-ax = plt.gca()
-ax.set(title='VISpm PSTs')
+# %% Plot psth
+for group, structure in dff.groupby('ecephys_structure_acronym'):
+    plt.figure()
+    sns.displot(data=structure, x='spike_time')
+    plt.gca().set(title=f'{group} PSTs')
