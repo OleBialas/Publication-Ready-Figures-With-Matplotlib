@@ -96,7 +96,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<div id="10f5e3e5" class="cell" data-execution_count="1">
+<div id="efc89bb3" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
@@ -105,9 +105,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib <span class="im">import</span> pyplot <span class="im">as</span> plt</span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>root <span class="op">=</span> Path(os.getcwd()).parent</span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>sys.path.append(<span class="bu">str</span>(root))</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> utils <span class="im">import</span> pca</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> utils <span class="im">import</span> pca</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>window_size <span class="op">=</span> <span class="dv">10</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>factor<span class="op">=</span><span class="dv">2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="93cc8524" class="cell" data-execution_count="2">
+<div id="7d72a05e" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_mean_waveforms():</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    mw_v1, mw_rl, mw_am <span class="op">=</span> [], [], []</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> ses <span class="kw">in</span> (root<span class="op">/</span><span class="st">"data"</span>).glob(<span class="st">"ses*"</span>):</span>
@@ -122,17 +124,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>        units_am <span class="op">=</span> units[units.ecephys_structure_acronym<span class="op">==</span><span class="st">"VISam"</span>]</span>
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> uid <span class="kw">in</span> units_am.index:</span>
 <span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>            mw_am.append(mw[uid])</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    times <span class="op">=</span> mw[<span class="st">"time"</span>]</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="dv">1</span><span class="op">/</span>np.diff(times))</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    mw_v1 <span class="op">=</span> np.stack(mw_v1)</span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    mw_rl <span class="op">=</span> np.stack(mw_rl)</span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    mw_am <span class="op">=</span> np.stack(mw_am)</span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> mw_v1, mw_rl, mw_am</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    time <span class="op">=</span> mw[<span class="st">"time"</span>]</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    mw_v1 <span class="op">=</span> np.stack(mw_v1)</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    mw_rl <span class="op">=</span> np.stack(mw_rl)</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    mw_am <span class="op">=</span> np.stack(mw_am)</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> time, mw_v1, mw_rl, mw_am</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="smooth-and-downsample" class="level2">
 <h2 class="anchored" data-anchor-id="smooth-and-downsample">Smooth and downsample</h2>
-<div id="9ebec03c" class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> smooth_and_downsample(X, window_size<span class="op">=</span><span class="dv">10</span>, factor<span class="op">=</span><span class="dv">2</span>):</span>
+<div id="5b311b9b" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> smooth_and_downsample(X, window_size<span class="op">=</span>window_size, factor<span class="op">=</span>factor):</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    kernel <span class="op">=</span> np.ones(window_size) <span class="op">/</span> window_size</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    smoothed <span class="op">=</span> np.apply_along_axis(</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>        <span class="kw">lambda</span> x: np.convolve(x, kernel, mode<span class="op">=</span><span class="st">'valid'</span>), </span>
@@ -144,42 +145,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="plot-waveforms" class="level2">
 <h2 class="anchored" data-anchor-id="plot-waveforms">Plot waveforms</h2>
-<div id="7219ae7b" class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>mw_v1, mw_rl, mw_am <span class="op">=</span> get_mean_waveforms()</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">3</span>, figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">12</span>), sharex<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>plt.subplots_adjust(hspace<span class="op">=</span><span class="dv">0</span>)</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> axes, data, name <span class="kw">in</span> <span class="bu">zip</span>(ax, [mw_v1, mw_rl, mw_am], [<span class="st">"V1"</span>, <span class="st">"RL"</span>, <span class="st">"AM"</span>]):</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    data <span class="op">=</span> smooth_and_downsample(data)</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> d <span class="kw">in</span> data:</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>        axes.plot(d, linewidth<span class="op">=</span><span class="fl">0.2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108]</code></pre>
-</div>
+<div id="6085ba86" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>time, mw_v1, mw_rl, mw_am <span class="op">=</span> get_mean_waveforms()</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>valid_time <span class="op">=</span> time[window_size <span class="op">-</span> <span class="dv">1</span>:]</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>valid_time <span class="op">=</span> valid_time[::factor]</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">3</span>, figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">12</span>), sharex<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>plt.subplots_adjust(hspace<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> axes, data, name <span class="kw">in</span> <span class="bu">zip</span>(ax, [mw_v1, mw_rl, mw_am], [<span class="st">"V1"</span>, <span class="st">"RL"</span>, <span class="st">"AM"</span>]):</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    data <span class="op">=</span> smooth_and_downsample(data)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> d <span class="kw">in</span> data:</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>        axes.plot(valid_time, d, linewidth<span class="op">=</span><span class="fl">0.2</span>)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">2</span>].<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">"Time [s]"</span>, ylabel<span class="op">=</span><span class="st">"Voltage [mV]"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="response_shapes_across_areas_files/figure-html/cell-5-output-2.png" width="660" height="929" class="figure-img"></p>
+<p><img src="response_shapes_across_areas_files/figure-html/cell-5-output-1.png" width="679" height="947" class="figure-img"></p>
 </figure>
 </div>
 </div>
@@ -188,48 +169,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="plot-variance-explained" class="level2">
 <h2 class="anchored" data-anchor-id="plot-variance-explained">Plot variance explained</h2>
 <div id="plot-function" class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_pca_variance_explained(ax, n_components<span class="op">=</span><span class="va">None</span>, logscale<span class="op">=</span><span class="va">True</span>):</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    mw_v1, mw_rl, mw_am <span class="op">=</span> get_mean_waveforms()</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> data, name <span class="kw">in</span> <span class="bu">zip</span>([mw_v1, mw_rl, mw_am], [<span class="st">"V1"</span>, <span class="st">"RL"</span>, <span class="st">"AM"</span>]):</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>        data <span class="op">=</span> smooth_and_downsample(data)</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>        variance_explained, components <span class="op">=</span> pca(data, n_components)</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> logscale:</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>            ax.semilogy(variance_explained<span class="op">*</span><span class="dv">100</span>, label<span class="op">=</span>name)</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>            ax.plot(variance_explained<span class="op">*</span><span class="dv">100</span>, label<span class="op">=</span>name)</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    ax.legend()</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    ax.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">"Component number"</span>, ylabel<span class="op">=</span><span class="st">"Variance explained [%]"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_pca_variance_explained(ax, n_components<span class="op">=</span><span class="va">None</span>, logscale<span class="op">=</span><span class="va">True</span>):</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    _, mw_v1, mw_rl, mw_am <span class="op">=</span> get_mean_waveforms()</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> data, name <span class="kw">in</span> <span class="bu">zip</span>([mw_v1, mw_rl, mw_am], [<span class="st">"V1"</span>, <span class="st">"RL"</span>, <span class="st">"AM"</span>]):</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>        data <span class="op">=</span> smooth_and_downsample(data)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>        variance_explained, components <span class="op">=</span> pca(data, n_components)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> logscale:</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>            ax.semilogy(variance_explained<span class="op">*</span><span class="dv">100</span>, label<span class="op">=</span>name)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>            ax.plot(variance_explained<span class="op">*</span><span class="dv">100</span>, label<span class="op">=</span>name)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    ax.legend()</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    ax.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">"Component number"</span>, ylabel<span class="op">=</span><span class="st">"Variance explained [%]"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="7d73f9d2" class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>plot_pca_variance_explained(ax, n_components<span class="op">=</span><span class="dv">25</span>, logscale<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108]</code></pre>
-</div>
+<div id="1e021694" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>plot_pca_variance_explained(ax, n_components<span class="op">=</span><span class="dv">25</span>, logscale<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="response_shapes_across_areas_files/figure-html/cell-7-output-2.png" width="603" height="429" class="figure-img"></p>
+<p><img src="response_shapes_across_areas_files/figure-html/cell-7-output-1.png" width="603" height="429" class="figure-img"></p>
 </figure>
 </div>
 </div>
@@ -237,47 +195,27 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="plot-first-pc" class="level2">
 <h2 class="anchored" data-anchor-id="plot-first-pc">Plot first PC</h2>
-<div id="711a8bad" class="cell" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_first_pc(ax):</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    mw_v1, mw_rl, mw_am <span class="op">=</span> get_mean_waveforms()</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> data, name <span class="kw">in</span> <span class="bu">zip</span>([mw_v1, mw_rl, mw_am], [<span class="st">"V1"</span>, <span class="st">"RL"</span>, <span class="st">"AM"</span>]):</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>        data <span class="op">=</span> smooth_and_downsample(data)</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>        variance_explained, components <span class="op">=</span> pca(data, n_components<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>        first_pc <span class="op">=</span> components[<span class="dv">0</span>]<span class="op">**</span><span class="dv">2</span></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>        first_pc<span class="op">/=</span>first_pc.<span class="bu">max</span>()</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>        ax.plot(first_pc, label<span class="op">=</span>name)</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    ax.legend()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="99f9a963" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_first_pc(ax):</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    time, mw_v1, mw_rl, mw_am <span class="op">=</span> get_mean_waveforms()</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    valid_time <span class="op">=</span> time[window_size <span class="op">-</span> <span class="dv">1</span>:]</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    valid_time <span class="op">=</span> valid_time[::factor]</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> data, name <span class="kw">in</span> <span class="bu">zip</span>([mw_v1, mw_rl, mw_am], [<span class="st">"V1"</span>, <span class="st">"RL"</span>, <span class="st">"AM"</span>]):</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>        data <span class="op">=</span> smooth_and_downsample(data)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>        variance_explained, components <span class="op">=</span> pca(data, n_components<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>        first_pc <span class="op">=</span> components[<span class="dv">0</span>]<span class="op">**</span><span class="dv">2</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>        first_pc<span class="op">/=</span>first_pc.<span class="bu">max</span>()</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>        ax.plot(valid_time, first_pc, label<span class="op">=</span>name)</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    ax.legend()</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    ax.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">"Time [s]"</span>, ylabel<span class="op">=</span><span class="st">"Component amplitude [a.u.]"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="117d1b71" class="cell" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>plot_first_pc(ax)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108 29999.91539108 29999.91539108 29999.91539108
- 29999.91539108]</code></pre>
-</div>
+<div id="139a2a60" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>plot_first_pc(ax)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="response_shapes_across_areas_files/figure-html/cell-9-output-2.png" width="571" height="411" class="figure-img"></p>
+<p><img src="response_shapes_across_areas_files/figure-html/cell-9-output-1.png" width="589" height="429" class="figure-img"></p>
 </figure>
 </div>
 </div>
