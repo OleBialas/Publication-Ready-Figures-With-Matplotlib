@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Data Access</title>
+<title>data_access</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -79,7 +79,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Data Access</h1>
+<h1 class="title">Acessing the data</h1>
 </div>
 
 
@@ -96,7 +96,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<div id="eae8baec" class="cell" data-execution_count="1">
+<div id="c3ec6d06" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
@@ -108,7 +108,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <section id="download-data" class="level2">
 <h2 class="anchored" data-anchor-id="download-data">Download data</h2>
-<div id="ef724e01" class="cell" data-execution_count="2">
+<p>Running the code below will download the data from Sciebo (~800MB) if it is not present in the project folder.</p>
+<div id="198962b8" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>root <span class="op">=</span> Path(os.getcwd()).parent</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="kw">not</span> (root<span class="op">/</span><span class="st">"data"</span>).exists():</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    token <span class="op">=</span> <span class="st">"bIDNCBs37frcli8"</span></span>
@@ -129,7 +130,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="data-contents" class="level2">
 <h2 class="anchored" data-anchor-id="data-contents">Data contents</h2>
 <p>The downloaded data can be found in the <code>/data</code> folder within the root directory of this repository. Let’s list all recording sessions:</p>
-<div id="98aecf39" class="cell" data-execution_count="3">
+<div id="7586ffcf" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>sys.path.append(<span class="bu">str</span>(root))</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>sessions <span class="op">=</span> (root<span class="op">/</span><span class="st">"data"</span>).glob(<span class="st">"ses*"</span>)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> ses <span class="kw">in</span> sessions:</span>
@@ -160,7 +161,8 @@ ses_732592105</code></pre>
 <li><code>spike_times.npy</code>: The spike times for every unit recorded in that session</li>
 <li><code>mean_waveforms.npy</code>: Mean waveform of every unit recorded in that session</li>
 </ul>
-<div id="3d229fa8" class="cell" data-execution_count="4">
+<p>For the examples below, we are going to use a single recording sessions:</p>
+<div id="1a740fb5" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>ses <span class="op">=</span> root<span class="op">/</span><span class="st">"data"</span><span class="op">/</span><span class="st">"ses_737581020"</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> <span class="bu">file</span> <span class="kw">in</span> ses.glob(<span class="st">"*"</span>):</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="bu">file</span>.name)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -174,154 +176,27 @@ ses_737581020_spike_times.npy</code></pre>
 </section>
 <section id="example-1-plot-mean-spike-waveforms-of-v1-neurons" class="level2">
 <h2 class="anchored" data-anchor-id="example-1-plot-mean-spike-waveforms-of-v1-neurons">Example 1: plot mean spike waveforms of V1 neurons</h2>
-<p>To obtain the mean waveforms of neurons in V1, we first have to select the units located in that area. For this, we can load the <code>units.csv</code> table and filter it:</p>
-<div id="de613915" class="cell" data-execution_count="5">
+<p>In this example, we are going to plot the mean waveforms for all recorded units that are located in primary visual cortex. To obtain the mean waveforms of neurons in V1, we first have to select the units located in that area. For this, we can load the <code>units.csv</code> table and filter it:</p>
+<div id="115f0770" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>units <span class="op">=</span> pd.read_csv(ses<span class="op">/</span><span class="ss">f"</span><span class="sc">{</span>ses<span class="sc">.</span>name<span class="sc">}</span><span class="ss">_units.csv"</span>, index_col<span class="op">=</span><span class="dv">0</span>)</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>units <span class="op">=</span> units[units.ecephys_structure_acronym <span class="op">==</span> <span class="st">"VISpm"</span>]</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(units)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(units.ecephys_structure_acronym.unique())</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>units_v1 <span class="op">=</span> units[units.ecephys_structure_acronym <span class="op">==</span> <span class="st">"VISpm"</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>           waveform_PT_ratio  waveform_amplitude  amplitude_cutoff  \
-unit_id                                                              
-951862451           4.183810           61.098375          0.076894   
-951862563           0.089129           67.591095          0.037326   
-951862536           0.260621          154.982295          0.000795   
-951862602           0.039589          101.573940          0.085761   
-951862662           0.500500           84.648720          0.038027   
-951862641           0.497818          152.839440          0.000140   
-951862629           0.185554          142.504050          0.000892   
-951862716           0.210873           81.661320          0.002794   
-951863068           0.347053          102.630645          0.006492   
-951862764           0.497432          185.319810          0.034336   
-951862757           0.165300          113.649315          0.026221   
-951862771           0.004827          123.793215          0.080750   
-951862860           0.031800           90.421500          0.019231   
-
-           cluster_id  cumulative_drift   d_prime  firing_rate  \
-unit_id                                                          
-951862451         205            312.82  5.437765     1.951613   
-951862563         213            197.86  2.028958    10.530902   
-951862536         211            142.38  5.518656     1.838513   
-951862602         216            157.42  2.181951    17.557757   
-951862662         221            264.58  2.727786     4.331962   
-951862641         219            179.08  5.073408     5.868255   
-951862629         218            170.54  4.970476     2.534676   
-951862716         226            134.39  4.254585     6.195341   
-951863068         262            122.73  3.977897     0.375184   
-951862764         231            140.87  6.302922     0.766183   
-951862757         230            170.71  3.477980     1.541092   
-951862771         232            111.57  4.840272     0.216276   
-951862860         243             36.83  5.099894     0.160980   
-
-           isi_violations  isolation_distance   L_ratio  ...  \
-unit_id                                                  ...   
-951862451        0.064397           76.310773  0.001266  ...   
-951862563        0.145233           43.680964  0.069123  ...   
-951862536        0.012094           61.771493  0.001352  ...   
-951862602        0.224236           55.562140  0.059513  ...   
-951862662        0.246156           39.004496  0.061928  ...   
-951862641        0.016619           50.981378  0.021720  ...   
-951862629        0.038177           50.933185  0.008481  ...   
-951862716        0.019171           91.461207  0.015112  ...   
-951863068        0.000000           63.131355  0.001331  ...   
-951862764        0.000000           75.771957  0.000242  ...   
-951862757        0.223762           51.328573  0.021754  ...   
-951862771        0.000000           41.522560  0.011630  ...   
-951862860        0.000000           58.938487  0.000725  ...   
-
-           ecephys_structure_id  ecephys_structure_acronym  \
-unit_id                                                      
-951862451                 533.0                      VISpm   
-951862563                 533.0                      VISpm   
-951862536                 533.0                      VISpm   
-951862602                 533.0                      VISpm   
-951862662                 533.0                      VISpm   
-951862641                 533.0                      VISpm   
-951862629                 533.0                      VISpm   
-951862716                 533.0                      VISpm   
-951863068                 533.0                      VISpm   
-951862764                 533.0                      VISpm   
-951862757                 533.0                      VISpm   
-951862771                 533.0                      VISpm   
-951862860                 533.0                      VISpm   
-
-           anterior_posterior_ccf_coordinate  dorsal_ventral_ccf_coordinate  \
-unit_id                                                                       
-951862451                                NaN                            NaN   
-951862563                                NaN                            NaN   
-951862536                                NaN                            NaN   
-951862602                                NaN                            NaN   
-951862662                                NaN                            NaN   
-951862641                                NaN                            NaN   
-951862629                                NaN                            NaN   
-951862716                                NaN                            NaN   
-951863068                                NaN                            NaN   
-951862764                                NaN                            NaN   
-951862757                                NaN                            NaN   
-951862771                                NaN                            NaN   
-951862860                                NaN                            NaN   
-
-           left_right_ccf_coordinate  probe_description  \
-unit_id                                                   
-951862451                        NaN             probeB   
-951862563                        NaN             probeB   
-951862536                        NaN             probeB   
-951862602                        NaN             probeB   
-951862662                        NaN             probeB   
-951862641                        NaN             probeB   
-951862629                        NaN             probeB   
-951862716                        NaN             probeB   
-951863068                        NaN             probeB   
-951862764                        NaN             probeB   
-951862757                        NaN             probeB   
-951862771                        NaN             probeB   
-951862860                        NaN             probeB   
-
-                          location  probe_sampling_rate  \
-unit_id                                                   
-951862451  See electrode locations         29999.919586   
-951862563  See electrode locations         29999.919586   
-951862536  See electrode locations         29999.919586   
-951862602  See electrode locations         29999.919586   
-951862662  See electrode locations         29999.919586   
-951862641  See electrode locations         29999.919586   
-951862629  See electrode locations         29999.919586   
-951862716  See electrode locations         29999.919586   
-951863068  See electrode locations         29999.919586   
-951862764  See electrode locations         29999.919586   
-951862757  See electrode locations         29999.919586   
-951862771  See electrode locations         29999.919586   
-951862860  See electrode locations         29999.919586   
-
-           probe_lfp_sampling_rate  probe_has_lfp_data  
-unit_id                                                 
-951862451              1249.996649                True  
-951862563              1249.996649                True  
-951862536              1249.996649                True  
-951862602              1249.996649                True  
-951862662              1249.996649                True  
-951862641              1249.996649                True  
-951862629              1249.996649                True  
-951862716              1249.996649                True  
-951863068              1249.996649                True  
-951862764              1249.996649                True  
-951862757              1249.996649                True  
-951862771              1249.996649                True  
-951862860              1249.996649                True  
-
-[13 rows x 40 columns]</code></pre>
+<pre><code>['VISpm' 'VISrl']</code></pre>
 </div>
 </div>
 <p>Now we can load <code>mean_waveforms.npy</code> and use the <code>unit_id</code> (i.e.&nbsp;the index) of the filtered <code>units</code> table to obtain the get the mean waveforms of those units and plot them. Because this is an object array, we have to call <code>.item()</code> to retrieve the content.</p>
-<div id="af3ec446" class="cell" data-execution_count="6">
+<div id="c9226d2c" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>mean_waveforms <span class="op">=</span> np.load(ses<span class="op">/</span><span class="ss">f"</span><span class="sc">{</span>ses<span class="sc">.</span>name<span class="sc">}</span><span class="ss">_mean_waveforms.npy"</span>, allow_pickle<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>mean_waveforms <span class="op">=</span> mean_waveforms.item()</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> uid <span class="kw">in</span> units.index:</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    plt.plot(mean_waveforms[<span class="st">"time"</span>], mean_waveforms[uid])</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> uid <span class="kw">in</span> units_v1.index:</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    ax.plot(mean_waveforms[<span class="st">"time"</span>], mean_waveforms[uid])</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>ax.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">"Time [s]"</span>, ylabel<span class="op">=</span><span class="st">"Voltage [mV]"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="data_access_files/figure-html/cell-7-output-1.png" width="586" height="411" class="figure-img"></p>
+<p><img src="data_access_files/figure-html/cell-7-output-1.png" width="604" height="429" class="figure-img"></p>
 </figure>
 </div>
 </div>
@@ -329,30 +204,76 @@ unit_id
 </section>
 <section id="example-2-plot-the-psth-for-grating_stimuli-in-v1" class="level2">
 <h2 class="anchored" data-anchor-id="example-2-plot-the-psth-for-grating_stimuli-in-v1">Example 2: Plot the PSTH for grating_stimuli in V1</h2>
-<p>The root folder of this repository contains a file called <code>utils.py</code> that contains some useful functions for computing spike statistics. We can import the <code>compute_psth()</code> function from the <code>utils</code> module</p>
-<div id="762cef9a" class="cell" data-execution_count="7">
+<p>In this example, we are going to plot the peri-stimulus time historgram (PSTH) which shows the average firing rate across time, for a single neuron in V1. The root folder of this repository contains a file called <code>utils.py</code> that contains some useful functions for computing spike statistics. We can import the <code>compute_psth()</code> function from the <code>utils</code> module</p>
+<div id="7a4448ac" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> utils <span class="im">import</span> compute_psth</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Load the table of <code>stimuli</code> and select all <code>static_grating</code> stimuli</p>
-<div id="c8252f34" class="cell" data-execution_count="8">
+<div id="74a8efc8" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>stimuli <span class="op">=</span> pd.read_csv(ses<span class="op">/</span><span class="ss">f"</span><span class="sc">{</span>ses<span class="sc">.</span>name<span class="sc">}</span><span class="ss">_stimuli.csv"</span>, index_col<span class="op">=</span><span class="dv">0</span>)</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>stimuli <span class="op">=</span> stimuli[stimuli.stimulus_name<span class="op">==</span><span class="st">"static_gratings"</span>]</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>stim_times <span class="op">=</span> np.asarray(stimuli.start_time)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Load the spike times - because it is an object array, we have to call <code>.item()</code> to retrieve the content after loading</p>
-<div id="b3251ddf" class="cell" data-execution_count="9">
+<div id="1fadfc36" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>spike_times <span class="op">=</span> np.load(ses<span class="op">/</span><span class="ss">f"</span><span class="sc">{</span>ses<span class="sc">.</span>name<span class="sc">}</span><span class="ss">_spike_times.npy"</span>, allow_pickle<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>spike_times <span class="op">=</span> spike_times.item()</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>spike_times <span class="op">=</span> spike_times[units.index[<span class="dv">2</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>spike_times_one_unit <span class="op">=</span> spike_times[units_v1.index[<span class="dv">2</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Compute the PSTH and plot the result</p>
-<div id="530dc222" class="cell" data-execution_count="10">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>bin_centers, psth <span class="op">=</span> compute_psth(spike_times, stim_times, window<span class="op">=</span>(<span class="op">-</span><span class="fl">0.05</span>, <span class="fl">0.25</span>), bin_width<span class="op">=</span><span class="fl">0.01</span>)</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>plt.plot(bin_centers, psth)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="a16c4e38" class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>bin_centers, psth <span class="op">=</span> compute_psth(spike_times_one_unit, stim_times, window<span class="op">=</span>(<span class="op">-</span><span class="fl">0.05</span>, <span class="fl">0.25</span>), bin_width<span class="op">=</span><span class="fl">0.01</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>ax.plot(bin_centers, psth)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>ax.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">"Time [s]"</span>, ylabel<span class="op">=</span><span class="st">"Mean firing rate [Hz]"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="data_access_files/figure-html/cell-11-output-1.png" width="571" height="411" class="figure-img"></p>
+<p><img src="data_access_files/figure-html/cell-11-output-1.png" width="589" height="429" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="example-3-plot-functional-coupling-between-v1-and-rl-using-ccg" class="level2">
+<h2 class="anchored" data-anchor-id="example-3-plot-functional-coupling-between-v1-and-rl-using-ccg">Example 3: Plot functional coupling between V1 and RL using CCG</h2>
+<p>In this example, we are going to compute the cross-correlogram (CCG) for units in primary visual cortex (V1) and rostrolateral area (RL). The CCG measures the coincidence of spikes at different time delays an reflects functional coupling between neurons. We can import the <code>compute_cross_correlogram</code> function from the <code>untils</code> module:</p>
+<div id="d238bd0c" class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> utils <span class="im">import</span> compute_cross_correlogram</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Because computing the CCG can be rather time-consuming, we can crop the spike times for this example and only include the first 10 minutes.</p>
+<div id="94a421f5" class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>duration <span class="op">=</span> <span class="dv">600</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>spike_times_cropped <span class="op">=</span> {}</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> spike_times.keys():</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    spike_times_cropped[i] <span class="op">=</span> spike_times[i][spike_times[i]<span class="op">&lt;</span>duration]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now we filter the <code>units</code> table and extract units in V1 and RL. To reduce computation time, we are randomly sampling 10 units from either area. Then we use those units to select from the <code>spike_times_cropped</code> dictionary created above.</p>
+<div id="d4d159f0" class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">100</span>) <span class="co"># set seed to make sampling replicable</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>units_rl <span class="op">=</span> units[units.ecephys_structure_acronym <span class="op">==</span> <span class="st">"VISrl"</span>].sample(<span class="dv">10</span>)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>units_v1 <span class="op">=</span> units[units.ecephys_structure_acronym <span class="op">==</span> <span class="st">"VISpm"</span>].sample(<span class="dv">10</span>)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>spike_times_rl <span class="op">=</span> [spike_times_cropped[i] <span class="cf">for</span> i <span class="kw">in</span> units_rl.index]</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>spike_times_v1 <span class="op">=</span> [spike_times_cropped[i] <span class="cf">for</span> i <span class="kw">in</span> units_v1.index]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>To compute the mean CCG for V1 and RL, we compute the CCG for every combination of neurons, put them into a list, and average across the first dimension (i.e.&nbsp;pairs of neurons).</p>
+<div id="12d93416" class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>all_ccg <span class="op">=</span> []</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> spikes1 <span class="kw">in</span> spike_times_v1:</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> spikes2 <span class="kw">in</span> spike_times_rl:</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>        bin_centers, ccg <span class="op">=</span> compute_cross_correlogram(spikes1, spikes2)</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>        all_ccg.append(ccg)</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>mean_ccg <span class="op">=</span> np.mean(all_ccg, axis<span class="op">=</span><span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now we plot the results. A spike in the CCG indicates functional coupling. A positive delay indicates V1 is leading, a negative delay indicates RL is leading.</p>
+<div id="cab64ecb" class="cell" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>ax.plot(bin_centers, mean_ccg)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>ax.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">"Time delay [s]"</span>, ylabel<span class="op">=</span><span class="st">"Spike coincidence [a.u.]"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="data_access_files/figure-html/cell-16-output-1.png" width="606" height="429" class="figure-img"></p>
 </figure>
 </div>
 </div>

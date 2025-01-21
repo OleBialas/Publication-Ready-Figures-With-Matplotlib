@@ -14,6 +14,8 @@ from matplotlib import pyplot as plt
 
 ## Download data
 
+Running the code below will download the data from Sciebo (~800MB) if it is not present in the project folder.
+
 ```{python}
 root = Path(os.getcwd()).parent
 if not (root/"data").exists():
@@ -52,6 +54,7 @@ Each session contains four files:
 - `spike_times.npy`: The spike times for every unit recorded in that session
 - `mean_waveforms.npy`: Mean waveform of every unit recorded in that session
 
+For the examples below, we are going to use a single recording sessions:
 ```{python}
 ses = root/"data"/"ses_737581020"
 for file in ses.glob("*"):
@@ -60,12 +63,14 @@ for file in ses.glob("*"):
 
 ## Example 1: plot mean spike waveforms of V1 neurons
 
+In this example, we are going to plot the mean waveforms for all recorded units that are located in primary visual cortex.
 To obtain the mean waveforms of neurons in V1, we first have to select the units located in that area.
 For this, we can load the `units.csv` table and filter it:
 
 ```{python}
 units = pd.read_csv(ses/f"{ses.name}_units.csv", index_col=0)
-units = units[units.ecephys_structure_acronym == "VISpm"]
+print(units.ecephys_structure_acronym.unique())
+units_v1 = units[units.ecephys_structure_acronym == "VISpm"]
 ```
 
 Now we can load `mean_waveforms.npy` and use the `unit_id` (i.e. the index) of the filtered `units` table to obtain the get the mean waveforms of those units and plot them.
@@ -74,13 +79,15 @@ Because this is an object array, we have to call `.item()` to retrieve the conte
 ```{python}
 mean_waveforms = np.load(ses/f"{ses.name}_mean_waveforms.npy", allow_pickle=True)
 mean_waveforms = mean_waveforms.item()
-for uid in units.index:
-    plt.plot(mean_waveforms["time"], mean_waveforms[uid])
-plt.show()
+fig, ax = plt.subplots()
+for uid in units_v1.index:
+    ax.plot(mean_waveforms["time"], mean_waveforms[uid])
+ax.set(xlabel="Time [s]", ylabel="Voltage [mV]")
 ```
 
 ## Example 2: Plot the PSTH for grating_stimuli in V1
 
+In this example, we are going to plot the peri-stimulus time historgram (PSTH) which shows the average firing rate across time, for a single neuron in V1.
 The root folder of this repository contains a file called `utils.py` that contains some useful functions for computing spike statistics.
 We can import the `compute_psth()` function from the `utils` module
 
@@ -99,15 +106,64 @@ Load the spike times - because it is an object array, we have to call `.item()` 
 ```{python}
 spike_times = np.load(ses/f"{ses.name}_spike_times.npy", allow_pickle=True)
 spike_times = spike_times.item()
-spike_times = spike_times[units.index[2]]
+spike_times_one_unit = spike_times[units_v1.index[2]]
 ```
 
 Compute the PSTH and plot the result
 ```{python}
-bin_centers, psth = compute_psth(spike_times, stim_times, window=(-0.05, 0.25), bin_width=0.01)
-plt.plot(bin_centers, psth)
+bin_centers, psth = compute_psth(spike_times_one_unit, stim_times, window=(-0.05, 0.25), bin_width=0.01)
+fig, ax = plt.subplots()
+ax.plot(bin_centers, psth)
+ax.set(xlabel="Time [s]", ylabel="Mean firing rate [Hz]")
 ```
 
+## Example 3: Plot functional coupling between V1 and RL using CCG
+
+
+In this example, we are going to compute the cross-correlogram (CCG) for units in primary visual cortex (V1) and rostrolateral area (RL).
+The CCG measures the coincidence of spikes at different time delays an reflects functional coupling between neurons.
+We can import the `compute_cross_correlogram` function from the `untils` module:
+
+```{python}
+from utils import compute_cross_correlogram
+```
+
+Because computing the CCG can be rather time-consuming, we can crop the spike times for this example and only include the first 10 minutes.
+```{python}
+duration = 600
+spike_times_cropped = {}
+for i in spike_times.keys():
+    spike_times_cropped[i] = spike_times[i][spike_times[i]<duration]
+```
+
+Now we filter the `units` table and extract units in V1 and RL. To reduce computation time, we are randomly sampling 10 units from either area.
+Then we use those units to select from the `spike_times_cropped` dictionary created above.
+```{python}
+np.random.seed(100) # set seed to make sampling replicable
+units_rl = units[units.ecephys_structure_acronym == "VISrl"].sample(10)
+units_v1 = units[units.ecephys_structure_acronym == "VISpm"].sample(10)
+spike_times_rl = [spike_times_cropped[i] for i in units_rl.index]
+spike_times_v1 = [spike_times_cropped[i] for i in units_v1.index]
+
+```
+
+To compute the mean CCG for V1 and RL, we compute the CCG for every combination of neurons, put them into a list, and average across the first dimension (i.e. pairs of neurons).
+```{python}
+all_ccg = []
+for spikes1 in spike_times_v1:
+    for spikes2 in spike_times_rl:
+        bin_centers, ccg = compute_cross_correlogram(spikes1, spikes2)
+        all_ccg.append(ccg)
+mean_ccg = np.mean(all_ccg, axis=0)
+```
+
+Now we plot the results. A spike in the CCG indicates functional coupling. A positive delay indicates V1 is leading, a negative delay indicates RL is leading.
+
+```{python}
+fig, ax = plt.subplots()
+ax.plot(bin_centers, mean_ccg)
+ax.set(xlabel="Time delay [s]", ylabel="Spike coincidence [a.u.]")
+```
 
 
 
