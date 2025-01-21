@@ -9,6 +9,7 @@ from shutil import copy
 import numpy as np
 import pandas as pd
 from pathlib import Path
+import matplotlib.pyplot as plt
 
 
 from src.utils import compute_psth
@@ -24,3 +25,13 @@ stims = pd.read_csv(session_dir / 'stims.csv')
 spikes = np.load(session_dir / 'spike_times.npy', allow_pickle=True).item()
 stims, spikes
 
+# %%
+units = spikes[915957872]
+
+# %%
+start_time = stims['start_time']
+start_time
+
+
+bin_centers, counts = compute_psth(spike_times=units, stim_times=start_time, bin_width=.01)
+plt.plot(bin_centers, counts)
