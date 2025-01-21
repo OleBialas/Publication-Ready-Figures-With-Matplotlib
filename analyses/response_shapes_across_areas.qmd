@@ -109,8 +109,11 @@ def plot_first_pc(ax):
 ```
 
 ```{python}
+import pickle
 fig, ax = plt.subplots()
 plot_first_pc(ax)
+with open(root/"figures"/"pc_per_region.pkl", 'wb') as file:
+    pickle.dump(fig, file)
 ```
 
 
