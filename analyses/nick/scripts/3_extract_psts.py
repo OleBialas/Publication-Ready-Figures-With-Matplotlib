@@ -16,7 +16,7 @@ from tqdm import tqdm
 # %% Select a Sessoin
 session_dirs = list(Path('data/processed').iterdir())
 
-for session_dir in session_dirs[1:]:
+for session_dir in session_dirs[0:]:
 # session_dir = session_dirs[0]
     session_dir
 
@@ -47,7 +47,7 @@ for session_dir in session_dirs[1:]:
     for stim_id, stim in tqdm(stims.iterrows(), total=len(stims)):
         for unit_id, unit in units.iterrows():
             spikes_rel = unit.spike_times - stim.start_time
-            spikes_rel[(-0.5 <= spikes_rel) & (spikes_rel < 0.7)]
+            spikes_rel[(-0.1 <= spikes_rel) & (spikes_rel < 0.2)]
             trial_spikes = spikes_rel[(-1.5 <= spikes_rel) & (spikes_rel < 1.5)]
             trial_spikes
 
