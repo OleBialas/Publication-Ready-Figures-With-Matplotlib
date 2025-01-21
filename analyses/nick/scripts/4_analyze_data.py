@@ -52,3 +52,7 @@ for group, fig in zip(groups, figs):
         pickle.dump(fig, f)
 # %%
 
+with open(f'../../figures/psth_VISrl.pkl', 'rb') as f:
+    ff = pickle.load(f)
+
+ff
